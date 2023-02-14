@@ -194,8 +194,9 @@ pub async fn call_connector_api(
     request: Request,
 ) -> CustomResult<Result<types::Response, types::Response>, errors::ApiClientError> {
     let current_time = Instant::now();
-
+    println!("request ec {:#?}", request);
     let response = send_request(state, request).await;
+    println!("response log {:#?}", response);
 
     let elapsed_time = current_time.elapsed();
     logger::info!(request_time=?elapsed_time);
@@ -568,18 +569,18 @@ pub fn build_redirection_form(form: &RedirectForm) -> maud::Markup {
             head {
                 style {
                     r##"
-                    
-                    "## 
+
+                    "##
                 }
                 (PreEscaped(r##"
                 <style>
-                    #loader1 { 
+                    #loader1 {
                         width: 500px,
-                    } 
-                    @media max-width: 600px { 
-                        #loader1 { 
-                            width: 200px 
-                        } 
+                    }
+                    @media max-width: 600px {
+                        #loader1 {
+                            width: 200px
+                        }
                     }
                 </style>
                 "##))
