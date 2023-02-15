@@ -238,12 +238,14 @@ impl
             .response
             .parse_struct("expresscheckout PaymentsResponse")
             .change_context(errors::ConnectorError::ResponseDeserializationFailed)?;
-        types::RouterData::try_from(types::ResponseRouterData {
+        let x = types::RouterData::try_from(types::ResponseRouterData {
             response,
             data: data.clone(),
             http_code: res.status_code,
         })
-        .change_context(errors::ConnectorError::ResponseHandlingFailed)
+        .change_context(errors::ConnectorError::ResponseHandlingFailed)?;
+        print!("sync decoded {:#?}", x);
+        Ok(x)
     }
 }
 
@@ -275,7 +277,7 @@ impl
         let res = req.response.as_ref().map_err(|_| errors::ConnectorError::FailedToObtainIntegrationUrl)?;
         if let types::PaymentsResponseData::TransactionResponse {resource_id, ..} = res {
             if let types::ResponseId::ConnectorTransactionId(r) = resource_id {
-                Ok(format!("{}{}{}{}", self.base_url(connectors), "txns/", r, "/capture/"))
+                Ok(format!("{}{}{}{}", self.base_url(connectors), "v2/txns/", r, "/capture/"))
             }else{
                 Err(errors::ConnectorError::FailedToObtainIntegrationUrl).into_report()
             }

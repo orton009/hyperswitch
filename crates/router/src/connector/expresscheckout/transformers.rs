@@ -21,7 +21,7 @@ pub struct ExpresscheckoutPaymentsRequest {
     currency: String,
     #[serde(rename = "order.gateway_id")]
     gateway_id: u8,
-    #[serde(rename = "order.metadata.DUMMY:gateway_reference_id")]
+    #[serde(rename = "order.metadata.RAZORPAY:gateway_reference_id")]
     gateway_ref_id: Option<String>,
     merchant_id: String,
     payment_method_type: PaymentMethodType,
@@ -55,9 +55,9 @@ impl TryFrom<&types::PaymentsAuthorizeRouterData> for ExpresscheckoutPaymentsReq
         let is_manual_capture = item.request.capture_method.map_or(false, |r| r == enums::CaptureMethod::Manual);
         //Hardcoding gateway reference id as the currenct architecture doesn't provide seamless integration of a payment aggregator
         let gateway_ref_id = if is_manual_capture {
-            Some("preauth".to_string())
+            Some("razorpay_refund".to_string())
         }else{
-            Some("normal".to_string())
+            Some("rzp_bin_test".to_string())
         };
 
         match item.request.payment_method_data {
@@ -71,7 +71,7 @@ impl TryFrom<&types::PaymentsAuthorizeRouterData> for ExpresscheckoutPaymentsReq
                     amount: item.request.amount.to_string(),
                     return_url,
                     currency: item.request.currency.to_string().to_uppercase(),
-                    gateway_id: 100,
+                    gateway_id: 23,
                     gateway_ref_id,
                     merchant_id: item.merchant_id.clone(),
                     payment_method_type: PaymentMethodType::Card,
@@ -125,6 +125,7 @@ pub enum ExpresscheckoutPaymentStatus {
     VoidInitiated,
     VoidFailed,
     Voided,
+    Authorized,
     Authorizing,
     PendingAuthentication,
 }
@@ -138,6 +139,7 @@ impl From<ExpresscheckoutPaymentStatus> for enums::AttemptStatus {
             ExpresscheckoutPaymentStatus::AuthenticationFailed => Self::AuthenticationFailed,
             ExpresscheckoutPaymentStatus::AuthorizationFailed => Self::AuthorizationFailed,
             ExpresscheckoutPaymentStatus::Authorizing => Self::Authorizing,
+            ExpresscheckoutPaymentStatus::Authorized => Self::Authorized,
             ExpresscheckoutPaymentStatus::PendingVbv => Self::AuthenticationPending,
             ExpresscheckoutPaymentStatus::JuspayDeclined => Self::Failure,
             ExpresscheckoutPaymentStatus::CaptureFailed => Self::CaptureFailed,
