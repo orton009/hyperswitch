@@ -111,7 +111,7 @@ impl
         let res = req.response.as_ref().map_err(|_| errors::ConnectorError::FailedToObtainIntegrationUrl)?;
         if let types::PaymentsResponseData::TransactionResponse {resource_id, ..} = res {
             if let types::ResponseId::ConnectorTransactionId(r) = resource_id {
-                Ok(format!("{}{}{}{}", self.base_url(connectors), "txns/", r, "/void/"))
+                Ok(format!("{}{}{}{}", self.base_url(connectors), "v2/txns/", r, "/void/"))
             }else{
                 Err(errors::ConnectorError::FailedToObtainIntegrationUrl).into_report()
             }
