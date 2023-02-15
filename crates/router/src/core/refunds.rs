@@ -157,7 +157,7 @@ pub async fn trigger_refund_to_gateway(
     } else {
         router_data
     };
-    println!("router_data_res refunds {:#?}", router_data_res);
+
     let refund_update = match router_data_res.response {
         Err(err) => storage::RefundUpdate::ErrorUpdate {
             refund_status: Some(enums::RefundStatus::Failure),

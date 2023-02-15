@@ -8,7 +8,6 @@ use crate::{
 use serde::{Deserialize, Deserializer, Serialize};
 use std::collections::HashMap;
 
-//TODO: Fill the struct with respective fields
 #[derive(Default, Debug, Serialize, Eq, PartialEq)]
 pub struct ExpresscheckoutPaymentsRequest {
     #[serde(rename = "order.order_id")]
@@ -89,8 +88,6 @@ impl TryFrom<&types::PaymentsAuthorizeRouterData> for ExpresscheckoutPaymentsReq
     }
 }
 
-//TODO: Fill the struct with respective fields
-// Auth Struct
 pub struct ExpresscheckoutAuthType {
     pub(super) api_key: String,
 }
@@ -107,8 +104,7 @@ impl TryFrom<&types::ConnectorAuthType> for ExpresscheckoutAuthType {
         }
     }
 }
-// PaymentsResponse
-//TODO: Append the remaining status flags
+
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ExpresscheckoutPaymentStatus {
@@ -152,7 +148,7 @@ impl From<ExpresscheckoutPaymentStatus> for enums::AttemptStatus {
     }
 }
 
-//TODO: Fill the struct with respective fields
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ExpresscheckoutPaymentsResponse {
     #[serde(default, deserialize_with = "deserialize_error_default")]
@@ -205,7 +201,6 @@ impl<F, T>
             types::PaymentsResponseData,
         >,
     ) -> Result<Self, Self::Error> {
-        println!("response ec {:#?}", item.response);
         Ok(Self {
             status: enums::AttemptStatus::from(item.response.status),
             response: Ok(types::PaymentsResponseData::TransactionResponse {
@@ -227,9 +222,6 @@ impl<F, T>
     }
 }
 
-//TODO: Fill the struct with respective fields
-// REFUND :
-// Type definition for RefundRequest
 #[derive(Default, Debug, Serialize)]
 pub struct ExpresscheckoutRefundRequest {
     unique_request_id: String,
@@ -320,7 +312,6 @@ impl TryFrom<types::RefundsResponseRouterData<api::Execute, RefundResponse>>
     fn try_from(
         item: types::RefundsResponseRouterData<api::Execute, RefundResponse>,
     ) -> Result<Self, Self::Error> {
-        println!("response refunds {:#?}", item.response);
             let refund_id = item.data.request.refund_id.clone();
             let status = get_status_from_refund_response(&refund_id, item.response);
             Ok(Self {
